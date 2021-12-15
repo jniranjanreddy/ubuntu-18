@@ -1,23 +1,199 @@
-How to configure ssl certs for https.
 
-```
-[root@webserver01 ~]# openssl genrsa -out httpd.key 2048
+Source - https://www.techrepublic.com/article/how-to-enable-https-on-apache-centos/
+
+
+[root@webserver01 ~]# mkdir /myworkspace
+[root@webserver01 ~]#
+[root@webserver01 ~]#
+[root@webserver01 ~]# cd /myworkspace/
+[root@webserver01 myworkspace]# mkdir httpd-ssl
+[root@webserver01 myworkspace]# cd httpd-ssl/
+[root@webserver01 httpd-ssl]# openssl genrsa -out ca.key 2048
 Generating RSA private key, 2048 bit long modulus
-.........+++
-.....................................+++
+.........................+++
+....................................................+++
 e is 65537 (0x10001)
+[root@webserver01 httpd-ssl]# openssl req -new -key ca.key -out ca.csr
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:IN
+State or Province Name (full name) []:HY
+Locality Name (eg, city) [Default City]:uppal
+Organization Name (eg, company) [Default Company Ltd]:nirulabs
+Organizational Unit Name (eg, section) []:jnr
+Common Name (eg, your name or your server's hostname) []:webserver01
+Email Address []:neeranjanreddy@gmail.com
 
-[root@webserver01 ~]# openssl req -new -key httpd.key -out httpd.csr -subj "/C=US/ST=NC/L=Raleigh/O=RedHat/OU=RHT/CN=webserver01.nirulabs.com"
-
-[root@webserver01 ~]# openssl x509 -req -days 366 -in httpd.csr -signkey httpd.key -out httpd.crt
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:hi
+string is too short, it needs to be at least 4 bytes long
+A challenge password []:Passw0rd
+An optional company name []:vlbssp
+[root@webserver01 httpd-ssl]#
+[root@webserver01 httpd-ssl]#
+[root@webserver01 httpd-ssl]# ll
+total 8
+-rw-r--r-- 1 root root 1119 Dec 15 05:13 ca.csr
+-rw-r--r-- 1 root root 1679 Dec 15 05:10 ca.key
+[root@webserver01 httpd-ssl]# openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt
 Signature ok
-subject=/C=US/ST=NC/L=Raleigh/O=RedHat/OU=RHT/CN=webserver01.nirulabs.com
+subject=/C=IN/ST=HY/L=uppal/O=nirulabs/OU=jnr/CN=webserver01/emailAddress=neeranjanreddy@gmail.com
 Getting Private key
+[root@webserver01 httpd-ssl]# cp ca.crt /etc/pki/tls/certs
+[root@webserver01 httpd-ssl]# cp ca.key /etc/pki/tls/private/ca.key
+[root@webserver01 httpd-ssl]# cp ca.csr /etc/pki/tls/private/ca.csr
+[root@webserver01 httpd-ssl]# vi /etc/httpd/conf.d/ssl.conf
+[root@webserver01 httpd-ssl]# ls -ld /etc/httpd/conf.d/ssl.conf
+ls: cannot access /etc/httpd/conf.d/ssl.conf: No such file or directory
+[root@webserver01 httpd-ssl]# mod_ssl
+-bash: mod_ssl: command not found
+[root@webserver01 httpd-ssl]# yum install mod_ssl
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: centos.excellmedia.net
+ * extras: centos.excellmedia.net
+ * updates: centos.excellmedia.net
+Resolving Dependencies
+--> Running transaction check
+---> Package mod_ssl.x86_64 1:2.4.6-97.el7.centos.2 will be installed
+--> Finished Dependency Resolution
 
-[root@webserver01 ~]# ll
--rw-r--r--  1 root root 1220 Dec 15 05:03 httpd.crt
--rw-r--r--  1 root root 1013 Dec 15 05:00 httpd.csr
--rw-r--r--  1 root root 1675 Dec 15 04:57 httpd.key
+Dependencies Resolved
 
+========================================================================================================================================================
+ Package                         Arch                           Version                                           Repository                       Size
+========================================================================================================================================================
+Installing:
+ mod_ssl                         x86_64                         1:2.4.6-97.el7.centos.2                           updates                         115 k
 
-```
+Transaction Summary
+========================================================================================================================================================
+Install  1 Package
+
+Total download size: 115 k
+Installed size: 224 k
+Is this ok [y/d/N]: y
+Downloading packages:
+mod_ssl-2.4.6-97.el7.centos.2.x86_64.rpm                                                                                         | 115 kB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : 1:mod_ssl-2.4.6-97.el7.centos.2.x86_64                                                                                               1/1
+  Verifying  : 1:mod_ssl-2.4.6-97.el7.centos.2.x86_64                                                                                               1/1
+
+Installed:
+  mod_ssl.x86_64 1:2.4.6-97.el7.centos.2
+
+Complete!
+[root@webserver01 httpd-ssl]# ls -ld /etc/httpd/conf.d/ssl.conf
+-rw-r--r-- 1 root root 9443 Sep 30  2020 /etc/httpd/conf.d/ssl.conf
+[root@webserver01 httpd-ssl]# vi /etc/httpd/conf.d/ssl.conf
+[root@webserver01 httpd-ssl]# systemctl restart httpd
+[root@webserver01 httpd-ssl]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Wed 2021-12-15 05:20:25 EST; 8s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 1461 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+ Main PID: 1464 (httpd)
+   Status: "Processing requests..."
+   CGroup: /system.slice/httpd.service
+           ├─1464 /usr/sbin/httpd -DFOREGROUND
+           ├─1465 /usr/sbin/httpd -DFOREGROUND
+           ├─1466 /usr/sbin/httpd -DFOREGROUND
+           ├─1467 /usr/sbin/httpd -DFOREGROUND
+           ├─1468 /usr/sbin/httpd -DFOREGROUND
+           └─1469 /usr/sbin/httpd -DFOREGROUND
+
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Stopped The Apache HTTP Server.
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Starting The Apache HTTP Server...
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Started The Apache HTTP Server.
+[root@webserver01 httpd-ssl]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Wed 2021-12-15 05:20:25 EST; 10s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 1461 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+ Main PID: 1464 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/httpd.service
+           ├─1464 /usr/sbin/httpd -DFOREGROUND
+           ├─1465 /usr/sbin/httpd -DFOREGROUND
+           ├─1466 /usr/sbin/httpd -DFOREGROUND
+           ├─1467 /usr/sbin/httpd -DFOREGROUND
+           ├─1468 /usr/sbin/httpd -DFOREGROUND
+           └─1469 /usr/sbin/httpd -DFOREGROUND
+
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Stopped The Apache HTTP Server.
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Starting The Apache HTTP Server...
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Started The Apache HTTP Server.
+[root@webserver01 httpd-ssl]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Wed 2021-12-15 05:20:25 EST; 11s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 1461 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+ Main PID: 1464 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/httpd.service
+           ├─1464 /usr/sbin/httpd -DFOREGROUND
+           ├─1465 /usr/sbin/httpd -DFOREGROUND
+           ├─1466 /usr/sbin/httpd -DFOREGROUND
+           ├─1467 /usr/sbin/httpd -DFOREGROUND
+           ├─1468 /usr/sbin/httpd -DFOREGROUND
+           └─1469 /usr/sbin/httpd -DFOREGROUND
+
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Stopped The Apache HTTP Server.
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Starting The Apache HTTP Server...
+Dec 15 05:20:25 webserver01.nirulabs.com systemd[1]: Started The Apache HTTP Server.
+[root@webserver01 httpd-ssl]# mkdir -p /var/www/html/adorkable
+[root@webserver01 httpd-ssl]# mkdir -p /etc/httpd/sites-available
+[root@webserver01 httpd-ssl]# mkdir -p /etc/httpd/sites-enabled
+[root@webserver01 httpd-ssl]# vim /etc/httpd/conf/httpd.conf
+-bash: vim: command not found
+[root@webserver01 httpd-ssl]# vi /etc/httpd/conf/httpd.conf
+[root@webserver01 httpd-ssl]# vi /etc/httpd/sites-
+sites-available/ sites-enabled/
+[root@webserver01 httpd-ssl]# vi /etc/httpd/sites-available/adorkable.conf
+[root@webserver01 httpd-ssl]# ln -s /etc/httpd/sites-available/adorkable.conf /etc/httpd/sites-enabled/adorkable.conf
+[root@webserver01 httpd-ssl]# systemctl restart httpd
+[root@webserver01 httpd-ssl]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Wed 2021-12-15 05:27:00 EST; 5s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 1488 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
+ Main PID: 1492 (httpd)
+   Status: "Processing requests..."
+   CGroup: /system.slice/httpd.service
+           ├─1492 /usr/sbin/httpd -DFOREGROUND
+           ├─1493 /usr/sbin/httpd -DFOREGROUND
+           ├─1494 /usr/sbin/httpd -DFOREGROUND
+           ├─1495 /usr/sbin/httpd -DFOREGROUND
+           ├─1496 /usr/sbin/httpd -DFOREGROUND
+           └─1497 /usr/sbin/httpd -DFOREGROUND
+
+Dec 15 05:27:00 webserver01.nirulabs.com systemd[1]: Stopped The Apache HTTP Server.
+Dec 15 05:27:00 webserver01.nirulabs.com systemd[1]: Starting The Apache HTTP Server...
+Dec 15 05:27:00 webserver01.nirulabs.com systemd[1]: Started The Apache HTTP Server.
+[root@webserver01 httpd-ssl]#
+[root@webserver01 httpd-ssl]#
+[root@webserver01 httpd-ssl]#
+[root@webserver01 httpd-ssl]# ls -ld /etc/httpd/sites-enabled/adorkable.conf
+lrwxrwxrwx 1 root root 41 Dec 15 05:26 /etc/httpd/sites-enabled/adorkable.conf -> /etc/httpd/sites-available/adorkable.conf
+[root@webserver01 httpd-ssl]#
+[root@webserver01 httpd-ssl]#
+
+ systemctl restart httpd
+ 
