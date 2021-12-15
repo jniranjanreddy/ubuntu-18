@@ -1,0 +1,23 @@
+How to configure ssl certs for https.
+
+```
+[root@webserver01 ~]# openssl genrsa -out httpd.key 2048
+Generating RSA private key, 2048 bit long modulus
+.........+++
+.....................................+++
+e is 65537 (0x10001)
+
+[root@webserver01 ~]# openssl req -new -key httpd.key -out httpd.csr -subj "/C=US/ST=NC/L=Raleigh/O=RedHat/OU=RHT/CN=webserver01.nirulabs.com"
+
+[root@webserver01 ~]# openssl x509 -req -days 366 -in httpd.csr -signkey httpd.key -out httpd.crt
+Signature ok
+subject=/C=US/ST=NC/L=Raleigh/O=RedHat/OU=RHT/CN=webserver01.nirulabs.com
+Getting Private key
+
+[root@webserver01 ~]# ll
+-rw-r--r--  1 root root 1220 Dec 15 05:03 httpd.crt
+-rw-r--r--  1 root root 1013 Dec 15 05:00 httpd.csr
+-rw-r--r--  1 root root 1675 Dec 15 04:57 httpd.key
+
+
+```
