@@ -1,0 +1,18 @@
+# How to use screen
+Steps:
+#screen <Enter>
+# execute your command leave the session or CTRL D to detach Screen
+# screen -r to reattach
+
+root@POC-Apps-01:~# screen -r
+There is a screen on:
+        654697.pts-0.POC-Apps-01        (05/13/22 11:54:10)     (Attached)
+There is no screen to be resumed.
+
+root@POC-Apps-01:~# screen -d
+[654697.pts-0.POC-Apps-01 detached.]
+
+
+root@POC-Apps-01:~# screen -r
+No migrations were executed, database schema was already up to date.
+
