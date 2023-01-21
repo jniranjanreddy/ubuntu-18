@@ -45,5 +45,7 @@ admin_password=(your secure password)
 Find the AWX custom virtual environment folder. Only usable for local install.
 
 custom_venv_dir=/opt/my-envs/ and change the path to /home/joakimnordin/virtual/awx but make sure you change to your username, not my username obviously.
+ansible-playbook -i inventory install.yml
+
 ```
 
