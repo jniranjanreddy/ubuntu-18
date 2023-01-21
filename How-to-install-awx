@@ -1,0 +1,49 @@
+```
+sudo apt update && sudo apt -y upgrade
+sudo reboot
+
+sudo apt install open-vm-tools-desktop
+sudo apt install net-tools
+sudo apt install git 
+sudo apt install python3-virtualenv
+```
+## Create a directory called virtual and then create a virtual environment within that directory called awx.
+```
+mkdir virtual 
+cd virtual 
+virtualenv awx
+```
+## Activate the virtual environment.
+source awx/bin/activate
+
+## Install Docker
+```
+sudo apt -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io
+sudo usermod -aG docker $USER
+newgrp docker
+docker version 
+```
+## Install Docker Compose
+pip3 install docker-compose
+
+## Clone the AWX repository from GitHub, make sure you go to your home directory before doing this otherwise you will get an error saying the folder awx already exists.
+```
+git clone -b 17.0.1 https://github.com/ansible/awx.git
+Edit the Inventory file
+You now have a folder called awx and within there a folder called installer and within there an inventory file you need to edit.
+
+You just need to make sure you have set an admin password and we need to change the directory of your virtual environment.
+
+Uncomment and change # admin_password=password to your password like so
+
+admin_password=(your secure password)
+Find the AWX custom virtual environment folder. Only usable for local install.
+
+custom_venv_dir=/opt/my-envs/ and change the path to /home/joakimnordin/virtual/awx but make sure you change to your username, not my username obviously.
+```
+
