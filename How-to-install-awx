@@ -30,6 +30,9 @@ docker version
 ```
 ## Install Docker Compose
 pip3 install docker-compose
+pip3 install ansible
+wget https://github.com/ansible/awx/archive/refs/tags/17.1.0.zip
+unzip 17.1.0.zip 
 
 ## Clone the AWX repository from GitHub, make sure you go to your home directory before doing this otherwise you will get an error saying the folder awx already exists.
 ```
