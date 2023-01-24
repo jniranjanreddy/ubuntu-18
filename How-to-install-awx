@@ -47,6 +47,18 @@ Uncomment and change # admin_password=password to your password like so
 admin_password=(your secure password)
 Find the AWX custom virtual environment folder. Only usable for local install.
 
+
+# If necessary
+admin_password=StrongPassword
+secret_key=Paste_Your_Secret_Key_Here
+pg_database=postgres
+pg_password=StrongPassword
+awx_alternate_dns_servers="8.8.8.8,8.8.4.4"
+postgres_data_dir="/var/lib/awx/pgdocker"
+docker_compose_dir="/var/lib/awx/awxcompose"
+project_data_dir="/var/lib/awx/projects"
+
+
 custom_venv_dir=/opt/my-envs/ and change the path to /home/joakimnordin/virtual/awx but make sure you change to your username, not my username obviously.
 ansible-playbook -i inventory install.yml
 
