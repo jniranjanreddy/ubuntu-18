@@ -1,5 +1,10 @@
 ## How to configure nfs in Ubuntu 20.x
 ## in server
+
+## If you come accross NFS Cannot allocate memory
+```
+sync && echo 3 > /proc/sys/vm/drop_caches
+```
 ```
 sudo apt update
 sudo apt install nfs-kernel-server
