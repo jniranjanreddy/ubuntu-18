@@ -1,5 +1,6 @@
 ## Installation of Kafka in ubuntu 20
 ## Source https://www.linuxtechi.com/how-to-install-apache-kafka-on-ubuntu/
+## https://www.cloudkarafka.com/docs/kafkarestproxy.html
 ```
 apt update
 apt install openjdk-11-jdk -y
@@ -43,6 +44,12 @@ WantedBy=multi-user.target
 
 systemctl daemon-reload
 
+
+cd /usr/local/kafka
+$ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic sampleTopic
+$ bin/kafka-topics.sh --list --bootstrap-server localhost:9092
+$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic sampleTopic
+$ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic sampleTopic --from-beginning
 
 
 
