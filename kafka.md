@@ -106,5 +106,9 @@ systemctl enable zookeeper
 systemctl enable kafka
 
 ~/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic TutorialTopic
-
+```
+## REST call to kafka topic
+```
+curl -X GET http://192.168.9.136:8082/topics/sampleTopic 
+```
 
