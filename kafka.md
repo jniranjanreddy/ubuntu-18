@@ -1,6 +1,7 @@
 ## Installation of Kafka in ubuntu 20
 ## Source https://www.linuxtechi.com/how-to-install-apache-kafka-on-ubuntu/
 ## https://www.cloudkarafka.com/docs/kafkarestproxy.html
+## kafkaUI - docker run -itd -p 9022:9000 -e KAFKA_BROKERCONNECT=192.168.9.140:9092 -e JVM_OPTS="-Xms32M -Xmx64M" -e SERVER_SERVLET_CONTEXTPATH="/" obsidiandynamics/kafdrop
 ```
 apt update
 apt install openjdk-11-jdk -y
