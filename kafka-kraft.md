@@ -8,6 +8,17 @@ java -version
 wget https://downloads.apache.org/kafka/3.6.1/kafka_2.12-3.6.1.tgz
 tar -xvf kafka_2.12-3.6.1.tgz
 mv kafka_2.13-3.6.1 /usr/local/kafka
+
+
+KAFKA_CLUSTER_ID="$(bin/kafka-storage.sh random-uuid)"
+bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/server.properties
+bin/kafka-server-start.sh config/kraft/server.properties
+
+bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --describe --topic quickstart-events --bootstrap-server localhost:9092
+$ bin/kafka-console-producer.sh --topic quickstart-events --bootstrap-server localhost:9092
+$ bin/kafka-console-consumer.sh --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
+
 ```
 ## Change the custom directory. 
 ```
