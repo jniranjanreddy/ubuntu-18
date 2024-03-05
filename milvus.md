@@ -1,5 +1,7 @@
 ## Source wget https://github.com/milvus-io/milvus/releases/download/vX.Y.Z/milvus-x.y.z-docker-compose.yml
 ## Releases - https://github.com/milvus-io/milvus/releases/
+## GUI for Milvus - https://github.com/zilliztech/attu
+## 
 
 
 ## One way of installation
